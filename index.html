@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ML Concept Studio</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="ML Concept Studio home">
+        <span class="brand-mark">ML</span>
+        <span>
+          <strong>ML Concept Studio</strong>
+          <small>Supervised and unsupervised learning lab</small>
+        </span>
+      </a>
+      <div class="topbar-actions">
+        <span class="status-pill" id="datasetStatus">No dataset loaded</span>
+      </div>
+    </header>
+
+    <main id="top" class="app-shell">
+      <aside class="control-panel" aria-label="Dataset controls">
+        <section class="panel-block">
+          <p class="eyebrow">Dataset</p>
+          <label class="file-drop" for="datasetInput">
+            <input id="datasetInput" type="file" accept=".csv,text/csv" />
+            <span class="file-icon" aria-hidden="true">CSV</span>
+            <span>
+              <strong>Upload a CSV dataset</strong>
+              <small>Rows become training examples. Columns become features.</small>
+            </span>
+          </label>
+          <div class="sample-actions" aria-label="Load sample datasets">
+            <button type="button" class="ghost-button" data-sample="classification">Classification sample</button>
+            <button type="button" class="ghost-button" data-sample="regression">Regression sample</button>
+            <button type="button" class="ghost-button" data-sample="unsupervised">Clustering sample</button>
+          </div>
+        </section>
+
+        <section class="panel-block">
+          <p class="eyebrow">Learning setup</p>
+          <label class="field-label" for="targetSelect">Target column</label>
+          <select id="targetSelect" disabled>
+            <option value="">Upload a dataset first</option>
+          </select>
+
+          <fieldset class="mode-group" id="learningModeGroup">
+            <legend>Learning goal</legend>
+            <label>
+              <input type="radio" name="learningMode" value="auto" checked />
+              Auto detect
+            </label>
+            <label>
+              <input type="radio" name="learningMode" value="supervised" />
+              Supervised
+            </label>
+            <label>
+              <input type="radio" name="learningMode" value="unsupervised" />
+              Unsupervised
+            </label>
+          </fieldset>
+
+          <button type="button" class="primary-button" id="analyzeBtn" disabled>Analyze dataset</button>
+        </section>
+
+        <section class="panel-block concept-strip">
+          <p class="eyebrow">Concept map</p>
+          <article>
+            <strong>Supervised learning</strong>
+            <span>Uses a target column. Classification predicts labels; regression predicts numbers.</span>
+          </article>
+          <article>
+            <strong>Unsupervised learning</strong>
+            <span>Finds structure without a target, such as clusters or low-dimensional patterns.</span>
+          </article>
+        </section>
+      </aside>
+
+      <section class="main-panel" aria-live="polite">
+        <section class="empty-state" id="emptyState">
+          <div class="signal-visual" aria-hidden="true">
+            <span style="--h: 54%"></span>
+            <span style="--h: 78%"></span>
+            <span style="--h: 38%"></span>
+            <span style="--h: 88%"></span>
+            <span style="--h: 62%"></span>
+            <span style="--h: 44%"></span>
+            <span style="--h: 72%"></span>
+          </div>
+          <h1>Upload a dataset and watch the machine learning pipeline explain itself.</h1>
+          <p>
+            The app inspects the target, prepares features, visualizes the data, explains each algorithm before training,
+            and then explains the prediction after the model runs.
+          </p>
+        </section>
+
+        <section class="content-section hidden" id="datasetSection">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Step 1</p>
+              <h2>Dataset diagnosis and preprocessing</h2>
+            </div>
+            <span class="problem-badge" id="problemBadge">Waiting</span>
+          </div>
+
+          <div class="metric-grid" id="healthCards"></div>
+
+          <div class="two-column">
+            <article class="tool-panel">
+              <div class="panel-title">
+                <h3>Missing values</h3>
+                <span id="missingCaption">-</span>
+              </div>
+              <canvas id="missingChart" height="220"></canvas>
+            </article>
+            <article class="tool-panel">
+              <div class="panel-title">
+                <h3>Target view</h3>
+                <span id="targetCaption">-</span>
+              </div>
+              <canvas id="targetChart" height="220"></canvas>
+            </article>
+          </div>
+
+          <div class="two-column">
+            <article class="tool-panel">
+              <div class="panel-title">
+                <h3>Feature types</h3>
+                <span id="featureCaption">-</span>
+              </div>
+              <canvas id="featureChart" height="220"></canvas>
+            </article>
+            <article class="tool-panel">
+              <div class="panel-title">
+                <h3>Numeric distribution</h3>
+                <span id="distributionCaption">-</span>
+              </div>
+              <canvas id="distributionChart" height="220"></canvas>
+            </article>
+          </div>
+
+          <article class="tool-panel">
+            <div class="panel-title">
+              <h3>Preprocessing actions</h3>
+              <span id="preprocessCaption">Automatic pipeline</span>
+            </div>
+            <div class="timeline" id="preprocessTimeline"></div>
+          </article>
+
+          <article class="tool-panel">
+            <div class="panel-title">
+              <h3>Dataset preview</h3>
+              <span id="previewCaption">First rows</span>
+            </div>
+            <div class="table-wrap" id="previewTable"></div>
+          </article>
+        </section>
+
+        <section class="content-section hidden" id="algorithmSection">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Step 2</p>
+              <h2>Choose an algorithm</h2>
+            </div>
+            <div class="cluster-control hidden" id="clusterControl">
+              <label for="clusterCount">Clusters</label>
+              <input id="clusterCount" type="number" min="2" max="8" value="3" />
+            </div>
+          </div>
+
+          <div class="algorithm-grid" id="algorithmCards"></div>
+
+          <article class="tool-panel explanation-panel" id="algorithmExplanation">
+            <p class="eyebrow">Algorithm explanation</p>
+            <h3>Select an algorithm to see the concept before training.</h3>
+          </article>
+
+          <button type="button" class="primary-button train-button" id="trainBtn" disabled>Train selected algorithm</button>
+        </section>
+
+        <section class="content-section hidden" id="resultSection">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Step 3</p>
+              <h2>Model output and interpretation</h2>
+            </div>
+            <span class="problem-badge" id="modelBadge">Not trained</span>
+          </div>
+
+          <div class="metric-grid" id="metricCards"></div>
+
+          <div class="two-column" id="resultCharts">
+            <article class="tool-panel">
+              <div class="panel-title">
+                <h3 id="evaluationChartTitle">Evaluation</h3>
+                <span id="evaluationCaption">-</span>
+              </div>
+              <canvas id="evaluationChart" height="240"></canvas>
+            </article>
+            <article class="tool-panel">
+              <div class="panel-title">
+                <h3>Most useful features</h3>
+                <span id="importanceCaption">Model signal</span>
+              </div>
+              <div id="importanceList" class="importance-list"></div>
+            </article>
+          </div>
+
+          <article class="tool-panel">
+            <div class="panel-title">
+              <h3>Training explanation</h3>
+              <span id="trainingCaption">What happened</span>
+            </div>
+            <div class="result-copy" id="trainingNarrative"></div>
+          </article>
+        </section>
+
+        <section class="content-section hidden" id="predictSection">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Step 4</p>
+              <h2>Predict and explain one row</h2>
+            </div>
+            <button type="button" class="ghost-button" id="fillExampleBtn">Fill example row</button>
+          </div>
+
+          <form class="predict-form" id="predictForm"></form>
+          <button type="button" class="primary-button" id="predictBtn">Predict output</button>
+          <article class="prediction-output" id="predictionOutput">
+            <strong>Prediction will appear here.</strong>
+          </article>
+        </section>
+      </section>
+    </main>
+
+    <footer class="footer-note">
+      Built with HTML, CSS, and vanilla JavaScript so the ML flow is visible and easy to learn in VS Code.
+    </footer>
+
+    <script src="assets/js/explanations.js"></script>
+    <script src="assets/js/samples.js"></script>
+    <script src="assets/js/data.js"></script>
+    <script src="assets/js/charts.js"></script>
+    <script src="assets/js/ml.js"></script>
+    <script src="assets/js/app.js"></script>
+  </body>
+</html>
